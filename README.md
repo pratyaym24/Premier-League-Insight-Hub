@@ -1,6 +1,7 @@
-# Report
+# Data
 
-In this folder we have uploaded the qmd file for report and the html file for our report.The Libraries we used are
+In this folder, we have uploaded the RData files which we have used in Quarto report and Shiny app along with R files which we made for saving our RData files.
+The Libraries we used are
 1.rvest,
 2.tidyverse,
 3.stringr,

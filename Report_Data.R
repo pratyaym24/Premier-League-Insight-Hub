@@ -5,9 +5,9 @@ library(rlist)
 
 #set working dir.
 
-x <- readRDS("../Data/Team_Data.RData")
-u <- readRDS("../Data/Team_Spends.RData")
-pu <- readRDS("../Data/Player_Data_Modified.RData")
+x <- readRDS("Team_Data.RData")
+u <- readRDS("Team_Spends.RData")
+pu <- readRDS("Player_Data_Modified.RData")
 
 lastsea = x[[24]]
 saveRDS(lastsea, file="Season23-24_Table.RData")
@@ -119,9 +119,12 @@ man_city_wins
 saveRDS(man_city_wins, file="man_city_new_wins_Table.RData")
 
 
+# Set working directory
+setwd("C:/Users/Venu Gopal/Desktop/mth-208-course-project-g_29_ftw-main/mth-208-course-project-g_29_ftw-main/Data")
+
 # Load player data
-haaland_data <- readRDS("../Data/Haaland22-24_Table.RData")
-ronaldo_data <- readRDS("../Data/Ronaldo07-10_Table.RData")
+haaland_data <- readRDS("Haaland22-24_Table.RData")
+ronaldo_data <- readRDS("Ronaldo07-10_Table.RData")
 
 # Ensure all necessary columns exist, and fill missing columns with a default value if necessary
 haaland_data <- haaland_data %>%

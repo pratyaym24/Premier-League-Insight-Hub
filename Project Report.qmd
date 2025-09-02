@@ -1,0 +1,201 @@
+---
+title: "Quarto Report : Analysis Of Premier League Seasons"
+author: "Group 29"
+format: html
+editor: visual
+geometry: margin=1in
+---
+
+## Data
+
+The data set consists of records from 24 seasons of the Premier League, starting from the year 2000. It is divided into two main categories:
+
+-   **Team Data**: Variables include ( per season )
+
+    -   Matches Played - MP
+    -   Won - W
+    -   Lost - L
+    -   Draw - D
+    -   Goals For - GF
+    -   Goals Against - GA
+    -   Goals Difference - GD
+    -   Points - Pt
+    -   Points per match
+    -   Attendance
+    -   Top Scorer of the Team
+    -   Goal Keeper
+    -   Money spent in Transfer Window
+
+-   **Player Data**: Key statistics include ( per season )
+
+    -   Matches Played
+    -   Minutes
+    -   Goals
+    -   Assists
+    -   Penalty kicks
+    -   Yellow Cards
+    -   Red Cards
+    -   Matches Played
+    -   Minutes Played
+
+The data set covers all teams and players involved in these seasons, with a substantial number of observations for each category.
+
+## Obtaining The Data
+
+The data was gathered through a mix of web scraping and making html pages. Team and player statistics were scraped from various sources that track Premier League data. We have taken Team data and Players data from a website called "FBREF" ( link attached at the end ) where we have taken 1st table for team data and Players Standard Stats for Players data. For the easy extraction of tables we have created html pages for each season ( link attached at the end ). And for the money spent in Transfer window, we obtained it from a website called "Transfer market"
+
+## Identify Any Biases In The Data
+
+Potential sources of bias include:
+
+1.  **Data Availability Bias**: Limited to official records, which may omit certain in-game events or misreport minor statistics.
+
+2.  **Historical Variability**: Earlier seasons may have incomplete data due to inconsistent data tracking methods over time.
+
+3.  **Selection Bias**: Focusing on certain popular teams or players could skew results if those figures are over represented.
+
+## Interesting Questions To Ask From Data
+
+-   How does a team’s spending correlate with their league position?
+
+-   How consistent are teams in terms of wins and losses over the years?
+
+-   Are there any teams that show significant improvement or decline over the 24-year period?
+
+-   Does the number of goals the top scorer for a club have depend on where they finish in the table?
+
+## Important Visualizations
+
+1.  **Wins over Time**: A line graph (like the Arsenal wins graph) showing the trend in match wins for each team across seasons.
+
+    ```{r}
+    #| echo: false
+
+    # Set working directory
+
+    x <- readRDS("../Data/arsenal_new_wins_Table.RData")
+
+    plot(x = x$Year, y = x$W,
+               xlab = "Years",
+               ylab = "Wins",
+               main = paste("Arsenal","Wins",sep =" "),
+               col = 'black',
+               type = 'p',
+               ylim = c(0,38),
+               pch = 19
+               )
+    lines(x = x$Year, y = x$W, col = 'red')
+
+
+    ```
+
+2.  **Wins Comparison for two teams over Time**: Two line graph (like the Arsenal wins vs Manchester City wins graph) showing the trend in match wins for each team across seasons.
+
+    ```{r}
+    #| echo: false
+
+    # Set working directory
+
+
+    # Load data for Arsenal and Manchester City wins
+    arsenal_data <- readRDS("../Data/arsenal_new_wins_Table.RData")
+    man_city_data <- readRDS("../Data/man_city_new_wins_Table.RData")
+
+    # Plot Arsenal wins
+    plot(x = arsenal_data$Year, y = arsenal_data$W,
+         xlab = "Years",
+         ylab = "Wins",
+         main = "Wins Comparision",
+         col = 'black',
+         type = 'p',
+         ylim = c(0, 38),
+         pch = 19)
+
+    # Add Arsenal trend line in red
+    lines(x = arsenal_data$Year, y = arsenal_data$W, col = 'red')
+
+    # Add Manchester City wins (points and line)
+    points(x = man_city_data$Year, y = man_city_data$W, col = 'green', pch = 19)  # Points for Man City in blue
+    lines(x = man_city_data$Year, y = man_city_data$W, col = 'skyblue')             # Line for Man City in blue
+
+    # Add a legend to distinguish between Arsenal and Manchester City
+    legend("topright", legend = c("Arsenal", "Manchester City"),
+           fill = c("black","green"),box.lwd = 2, cex = 0.75)
+
+    ```
+
+3.  **Comparative Analysis**: A visualization tool to compare performance metrics (like goals, assists) between two players or teams. For example here we are comparing stats of Haaland in the years 2022-24 and Ronaldo in the years 2007-10
+
+    ```{r}
+    #| echo: false
+    #Set working Directory
+    z <- readRDS("../Data/plyr_comp_Table.RData")
+    z
+    ```
+
+4.  **Seasonal Summary Table**: A filter-enabled table providing the complete data for any chosen season, allowing for detailed season-by-season analysis. Here we are showing the Table of 1st season
+
+    ```{r}
+    #| echo: false
+
+    # set working directory
+    library(dplyr)
+    y <- readRDS("../Data/Season23-24_Table.RData")
+    y <- y %>% select(-"Notes")
+    y
+    ```
+
+5.  **Money Spent vs Finishing position**: A scatter plot showing the trend in Finishing Position for each team plotted against the Money Spent.
+
+    ```{r}
+    #| echo: false
+
+    # set working directory
+    library(dplyr)
+    x <- readRDS("../Data/Team_Data.RData")
+    u <- readRDS("../Data/Team_Spends.RData")
+    k <- numeric(24)
+        l <- numeric(24)
+        track <- 0
+        for(i in 1:24){
+          t <- as.data.frame(x[[25-i]])
+          if("Arsenal FC" %in% u[[2*i - 1]]){
+            k[i] <- (u[[2*i]]["Arsenal FC" == u[[2*i-1]]])
+            l[i] <- t$Rk["Arsenal" == t$Squad]
+            track <- track + 1
+          }
+          else{
+            k[i] <- NA
+            l[i] <- NA
+          }
+        }
+        plot(k,l,
+             xlab = "Net Spend(in ₹Cr)",
+             ylab = "Finshing Position",
+             main = "Arsenal Spend vs Finish Position",
+             pch = 19,
+             col = 'red')
+        if(track != 1){
+          abline(lm(l~k))
+        }
+    ```
+
+Each visualization is carefully designed for clarity, ensuring that trends and insights are easy to interpret.
+
+## Final Conclusions
+
+The analysis reveals several trends, such as how team spending might affect performance, the impact of key players on team success, and the general consistency of certain teams in maintaining top positions. Additionally, player-specific metrics show the evolution of key players over time, offering insights into their impact on their respective teams.
+
+## Resources
+
+List all sources and links to data sources used, including official Premier League websites, historical databases, and any APIs or web platforms used for scraping data.
+
+-   All 24 Seasons of Premier League : [Premier League](https://fbref.com/en/comps/9/history/Premier-League-Seasons "Premier League all seasons")
+
+-   Team Stats for a particular season ( say 2016-17 ) : [Team Data for Season (2016-17)](https://fbref.com/en/comps/9/2016-2017/2016-2017-Premier-League-Stats)
+
+-   Player Stats for a particular season ( say 2016-17 ) : [Players Data for Season (2016-17)](https://fbref.com/en/comps/9/2016-2017/stats/2016-2017-Premier-League-Stats)
+
+-   An example html page we created ( say 2016-17 ) : [HTML page for Players data:season(2016-17)](file:///C:/Users/Venu%20Gopal/Documents/mth-208-course-project-g_29_ftw-main/mth-208-course-project-g_29_ftw-main/Data/index2016-2017.htm)
+
+-   Website we used for money spent on Transfer window : [Transfer market](https://www.transfermarkt.co.in/)
